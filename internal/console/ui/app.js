@@ -146,8 +146,16 @@ function refusal(res) { return el("p", { class: "msg bad" }, "Core refused: " + 
 
 // ---- screens ----
 async function overview() {
-  const [nodes, alerts, who] = await Promise.all([call("GET", CORE + "nodes"), core("GET", "alerts"), core("GET", "whoami")]);
+  const [nodes, alerts, who, lic] = await Promise.all([call("GET", CORE + "nodes"), core("GET", "alerts"), core("GET", "whoami"), core("GET", "license")]);
   const out = [el("h1", {}, "Overview" + (state.node ? " — " + state.node : ""))];
+  if (lic.ok) {
+    const L = lic.data, t = L.license || {};
+    const bad = L.restricted || L.state === "expired", warn = L.state === "warning" || L.state === "grace" || L.state === "unlicensed";
+    out.push(el("p", { class: "msg " + (bad ? "bad" : warn ? "" : "good") },
+      `License: ${L.state}` + (t.id ? ` — ${t.id}, ${t.licensee}, until ${String(t.expires).slice(0, 10)} (${L.days_left} days)` : "") +
+      ` · ceilings ${L.ceilings.max_nodes} nodes, depth ${L.ceilings.max_depth}` + (L.restricted ? ` · RESTRICTED: ${L.reason}` : "") +
+      (L.enforced === false ? " · development build (not enforced)" : "")));
+  }
   if (who.ok) out.push(el("div", { class: "card kv" },
     el("span", { class: "muted" }, "node"), el("span", {}, text(who.data.node)),
     el("span", { class: "muted" }, "identity"), el("span", {}, text(who.data.identity)),
