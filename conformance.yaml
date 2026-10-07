@@ -1,0 +1,16 @@
+# heain-console under the heain conformance suite (heain-sdk conformance/). The console serves people only: the probe
+# app is refused on /v1/core/... (401) before core is asked; the screens are served to anyone. scripts/live_5b.sh runs
+# people through heain-gateway, MFA, roles, approvals, remote admin and the audit end to end.
+# (The suite matches a {path...} template to one path segment, so the samples use one-segment paths.)
+manifest: heain-app.yaml
+build: [go, build, -o, heain-console, ./cmd/heain-console]
+start: [./heain-console]
+port: 19590
+endpoints:
+  - {method: GET, path: /ui/index.html, expect: 200}
+  - {method: GET, path: /ui/app.js, expect: 200}
+  - {method: GET, path: /ui/nothing-here.html, expect: 404}
+  - {method: GET, path: /v1/core/whoami, expect: 401}
+  - {method: POST, path: /v1/core/config-policy-x, body: {value: conformance-secret-value}, expect: 401, secret: conformance-secret-value}
+  - {method: PUT, path: /v1/core/config-system-x, body: {value: conformance-secret-value2}, expect: 401, secret: conformance-secret-value2}
+  - {method: DELETE, path: /v1/core/x, expect: 401}

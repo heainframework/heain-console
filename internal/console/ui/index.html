@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>heain console</title>
+<link rel="stylesheet" href="app.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<header id="top" hidden>
+  <strong class="brand">heain console</strong>
+  <nav id="tabs"></nav>
+  <span class="spacer"></span>
+  <label class="node">node <select id="node"></select></label>
+  <span id="who" class="who"></span>
+  <button id="logout" class="ghost">Sign out</button>
+</header>
+<main>
+  <section id="login" hidden>
+    <h1>Sign in</h1>
+    <p class="muted">heain-core's admin plane. Your account needs roles in core (roles.admins / roles.approvers, as user:&lt;account&gt;), and a sign-in with TOTP or your organisation's single sign-on.</p>
+    <form id="login-form" autocomplete="on">
+      <label>Account <input name="username" autocomplete="username" required></label>
+      <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+      <label>TOTP code <input name="totp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}"></label>
+      <label id="newpw" hidden>New password <input name="new_password" type="password" autocomplete="new-password"></label>
+      <button type="submit">Sign in</button>
+      <p id="login-msg" class="msg" role="alert"></p>
+    </form>
+  </section>
+  <section id="view" hidden></section>
+  <p id="status" class="msg" role="status"></p>
+</main>
+</body>
+</html>

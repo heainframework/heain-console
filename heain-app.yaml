@@ -1,0 +1,25 @@
+# heain-console v1 (Step 5b, 2026-10-08): the web screens for heain-core's admin plane, behind heain-gateway.
+# GET /ui/... serves plain HTML/JS embedded in the binary (anonymous, a strict CSP). /v1/core/... runs core's
+# /v1/admin/... as the signed-in person: the console relays the gateway's assertion and the gateway's certificate to
+# core's /v1/app/admin/... (core Step 5b-1; this app must be in the 2b key console.apps). Core decides everything --
+# the person's roles (roles.admins / roles.approvers, "user:<account>"), four-eyes, P5, MFA (console.auth_methods).
+manifest_version: 1
+app:
+  id: heain-console
+  version: 1.0.0
+  group: base
+  description: Web screens for heain-core's admin plane behind heain-gateway -- core decides every role, approval and MFA rule.
+  api: v1
+  sdk: {name: heain-sdk-go, version: ">=1.0.0"}
+capabilities:
+  - {name: console.ui, version: 1, formal: false, execution: direct, ai: {used: false}}
+  - {name: console.admin, version: 1, formal: true, execution: direct, ai: {used: false}}
+endpoints:
+  - {method: GET, path: "/ui/{path...}", capability: console.ui, formal: false, public: true}
+  - {method: GET, path: "/v1/core/{path...}", capability: console.admin, formal: false, public: true}
+  - {method: POST, path: "/v1/core/{path...}", capability: console.admin, formal: true, public: true}
+  - {method: PUT, path: "/v1/core/{path...}", capability: console.admin, formal: true, public: true}
+  - {method: DELETE, path: "/v1/core/{path...}", capability: console.admin, formal: true, public: true}
+offline:
+  allowed: [console.ui, console.admin]
+  journal: none
