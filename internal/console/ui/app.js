@@ -166,8 +166,10 @@ async function overview() {
   out.push(el("h2", {}, "Fleet"));
   out.push(nodes.ok ? table(nodes.data.nodes, [["node", "node"], ["depth", "depth"], ["parent", "parent"], ["core", "core_version"], ["config", "config_version"],
     ["leader", "leader"], ["P5 waiting", "p5_waiting"], ["report age (s)", "age_seconds"]]) : refusal(nodes));
-  out.push(el("h2", {}, "Active alerts"));
-  out.push(alerts.ok ? table(alerts.data.alerts, [["since", "since"], ["severity", "severity"], ["rule", "rule"], ["node", "node"], ["message", "message"]], "No active alert.") : refusal(alerts));
+  // core sends kind and detail (the columns rule/node/message were always empty; found 2026-11-19);
+  // an app's own alerts (core C26) show as <app-id>.<kind>
+  out.push(el("h2", {}, "Active alerts" + (alerts.ok && alerts.data.node ? " — " + alerts.data.node : "")));
+  out.push(alerts.ok ? table(alerts.data.alerts, [["since", "since"], ["severity", "severity"], ["kind", "kind"], ["detail", "detail"]], "No active alert.") : refusal(alerts));
   return out;
 }
 
